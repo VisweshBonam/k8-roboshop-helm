@@ -1,36 +1,36 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: mongodb
+  name: redis
   namespace: roboshop
   labels:
     project: roboshop
     tier: database
-    component: mongodb
+    component: redis
 spec:
   selector:
     matchLabels:
       project: roboshop
       tier: database
-      component: mongodb # has to match .spec.template.metadata.labels
-  serviceName: "mongodb-service-headless"
-  replicas: 2 # by default is 1
+      component: redis # has to match .spec.template.metadata.labels
+  serviceName: "redis-service-headless"
+  replicas: 1 # by default is 1
   template:
     metadata:
       labels:
         project: roboshop
         tier: database
-        component: mongodb # has to match .spec.selector.matchLabels
+        component: redis # has to match .spec.selector.matchLabels
     spec:
       containers:
-      - name: mongodb
+      - name: redis
         image: "{{ .Values.statefulset.imagePath }}:{{ .Values.statefulset.imageVersion }}"
         volumeMounts:
-        - name: mongodb-data
+        - name: redis-data
           mountPath: /data/db
   volumeClaimTemplates:
   - metadata:
-      name: mongodb-data
+      name: redis-data
     spec:
       accessModes: [ "ReadWriteOnce" ]
       storageClassName: "roboshop-ebs"
