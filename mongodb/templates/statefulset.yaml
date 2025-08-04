@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
       - name: mongodb
-        image: visweshbonam/mongodb:v1
+        image: "{{ .Values.statefulset.imagePath }}:{{ .Values.statefulset.imageVersion }}"
         volumeMounts:
         - name: mongodb-data
           mountPath: /data/db
