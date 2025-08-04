@@ -1,36 +1,39 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: redis
+  name: mysql
   namespace: roboshop
   labels:
     project: roboshop
     tier: database
-    component: redis
+    component: mysql
 spec:
   selector:
     matchLabels:
       project: roboshop
       tier: database
-      component: redis # has to match .spec.template.metadata.labels
-  serviceName: "redis-service-headless"
+      component: mysql # has to match .spec.template.metadata.labels
+  serviceName: "mysql-service-headless"
   replicas: 2 # by default is 1
   template:
     metadata:
       labels:
         project: roboshop
         tier: database
-        component: redis # has to match .spec.selector.matchLabels
+        component: mysql # has to match .spec.selector.matchLabels
     spec:
       containers:
-      - name: redis
+      - name: mysql
         image: "{{ .Values.statefulset.imagePath }}:{{ .Values.statefulset.imageVersion }}"
+        envFrom:
+        - secretRef:
+            name: mysql-Secret
         volumeMounts:
-        - name: redis-data
-          mountPath: /data
+        - name: mysql-data
+          mountPath: /var/lib/mysql
   volumeClaimTemplates:
   - metadata:
-      name: redis-data
+      name: mysql-data
     spec:
       accessModes: [ "ReadWriteOnce" ]
       storageClassName: "roboshop-ebs"
